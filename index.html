@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NeuStock">
+<meta name="theme-color" content="#070708">
+<title>NeuAutoStock</title>
+<style>
+:root {
+  --s0:#070708; --s1:#0c0c0e; --s2:#111114; --s3:#18181c; --s4:#1f1f24; --s5:#27272e;
+  --glass:rgba(11,11,13,0.92);
+  --b1:rgba(255,255,255,0.04); --b2:rgba(255,255,255,0.08); --b3:rgba(255,255,255,0.14); --b4:rgba(255,255,255,0.26);
+  --t1:#efeff2; --t2:#96969f; --t3:#505059; --t4:#32323a;
+  --gold:#d4a84b; --gold-l:#e8c06a; --gold-d:#a07830; --gold-g:rgba(212,168,75,0.13); --gold-g2:rgba(212,168,75,0.06);
+  --red:#f04444; --red-g:rgba(240,68,68,0.11);
+  --green:#2ec460; --green-g:rgba(46,196,96,0.11);
+  --blue:#4488ff; --blue-g:rgba(68,136,255,0.11);
+  --amber:#f09020; --amber-g:rgba(240,144,32,0.11);
+  --purple:#9060f0; --purple-g:rgba(144,96,240,0.11);
+  --teal:#20b8a0; --teal-g:rgba(32,184,160,0.11);
+  --r1:6px; --r2:10px; --r3:14px; --r4:18px; --r5:24px; --r6:32px;
+  --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
+  --sal:env(safe-area-inset-left); --sar:env(safe-area-inset-right);
+  --mono:'SF Mono','Fira Code','Consolas','Courier New',monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+html,body{background:var(--s0);color:var(--t1);font-family:var(--sans);height:100%;overscroll-behavior:none;overflow-x:hidden;}
+body{padding-top:var(--sat);padding-bottom:var(--sab);padding-left:var(--sal);padding-right:var(--sar);}
+button{font-family:inherit;cursor:pointer;} input,select,textarea{font-family:inherit;}
+::-webkit-scrollbar{width:3px;height:3px;} ::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px;}
+
+/* ═══ HEADER ═══ */
+.hdr{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border-bottom:1px solid var(--b2);}
+.hdr-inner{padding:12px 14px 0;}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-ico{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-d));border-radius:var(--r2);display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px var(--gold-g);flex-shrink:0;position:relative;overflow:hidden;}
+.brand-ico::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.18),transparent);border-radius:var(--r2);}
+.brand-ico svg{width:19px;height:19px;color:var(--s0);}
+.brand-info{}
+.brand-name{font-size:16px;font-weight:700;letter-spacing:-0.4px;}
+.brand-sub{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:2px;margin-top:1px;}
+.hdr-btns{display:flex;gap:6px;align-items:center;}
+.hbtn{width:34px;height:34px;border-radius:var(--r2);background:var(--s3);border:1px solid var(--b2);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .13s;flex-shrink:0;}
+.hbtn:active{background:var(--s4);transform:scale(0.92);}
+.hbtn svg{width:15px;height:15px;}
+.hbtn-gold{background:var(--gold);color:var(--s0);border-color:var(--gold);font-size:12px;font-weight:700;padding:0 13px;width:auto;gap:4px;box-shadow:0 2px 10px var(--gold-g);}
+.hbtn-gold:active{background:var(--gold-l);transform:scale(0.95);}
+.hbtn-gold svg{width:12px;height:12px;}
+.hbtn-reception{background:var(--teal-g);color:var(--teal);border-color:rgba(32,184,160,0.3);font-size:11px;font-weight:700;padding:0 11px;width:auto;gap:4px;}
+.hbtn-reception:active{background:var(--teal);color:var(--s0);}
+
+/* Search */
+.srch-wrap{position:relative;margin-bottom:10px;}
+.srch-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;}
+.srch-ico svg{width:15px;height:15px;display:block;}
+.srch-inp{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r3);color:var(--t1);font-size:15px;padding:10px 38px 10px 38px;outline:none;-webkit-appearance:none;transition:border-color .18s,box-shadow .18s;}
+.srch-inp::placeholder{color:var(--t3);}
+.srch-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-g2);}
+.srch-clr{position:absolute;right:7px;top:50%;transform:translateY(-50%);background:var(--s4);border:none;color:var(--t2);width:24px;height:24px;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .13s;}
+.srch-wrap.has-v .srch-clr{opacity:1;pointer-events:auto;}
+
+/* Tabs */
+.tabs-wrap{overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:0 14px;}
+.tabs-wrap::-webkit-scrollbar{display:none;}
+.tabs{display:flex;gap:5px;padding-bottom:11px;}
+.tab{white-space:nowrap;padding:6px 13px;border-radius:var(--r6);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-size:12px;font-weight:500;flex-shrink:0;transition:all .18s;display:flex;align-items:center;gap:5px;}
+.tab:active{transform:scale(0.95);}
+.tab.active{background:var(--gold);color:var(--s0);border-color:var(--gold);font-weight:700;box-shadow:0 2px 8px var(--gold-g);}
+.tab .bdg{font-size:9.5px;font-weight:700;background:rgba(0,0,0,0.18);padding:1px 5px;border-radius:7px;min-width:16px;text-align:center;}
+.tab.active .bdg{background:rgba(0,0,0,0.24);}
+.tab.t-alert{border-color:rgba(240,68,68,0.3);color:var(--red);background:var(--red-g);}
+.tab.t-alert.active{background:var(--red);color:#fff;border-color:var(--red);}
+
+/* ═══ STATS ═══ */
+.stats{display:flex;gap:7px;padding:9px 14px;overflow-x:auto;scrollbar-width:none;background:var(--s1);border-bottom:1px solid var(--b1);}
+.stats::-webkit-scrollbar{display:none;}
+.stat{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r3);padding:8px 12px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;min-width:58px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-g),transparent);}
+.stat-v{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green);line-height:1;}
+.stat-v.a{color:var(--red);} .stat-v.n{color:var(--gold);}
+.stat-l{font-size:8.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+
+/* ═══ QUICK ═══ */
+.quick{background:var(--s1);border-bottom:1px solid var(--b1);overflow:hidden;max-height:210px;transition:max-height .3s cubic-bezier(0.4,0,0.2,1);}
+.quick.col{max-height:42px;}
+.quick-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;}
+.quick-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.4px;display:flex;align-items:center;gap:6px;}
+.quick-lbl svg{color:var(--gold);width:12px;height:12px;}
+.quick-chev{background:none;border:none;color:var(--t3);display:flex;align-items:center;transition:transform .3s cubic-bezier(0.4,0,0.2,1);}
+.quick-chev svg{width:17px;height:17px;}
+.quick.col .quick-chev{transform:rotate(180deg);}
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px;padding:0 11px 11px;max-height:160px;overflow-y:auto;}
+.qr{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r2);padding:6px 4px;text-align:center;cursor:pointer;transition:all .12s;position:relative;}
+.qr:active{transform:scale(0.93);}
+.qr.ok{border-color:rgba(46,196,96,0.25);}
+.qr.low{border-color:rgba(240,68,68,0.4);background:var(--red-g);}
+.qr.mt{opacity:0.36;}
+.qr-ref{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--gold);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qr-qty{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--t1);}
+.qr.low .qr-qty{color:var(--red);} .qr.mt .qr-qty{color:var(--t4);}
+.qr-dot{position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--red);animation:blink 1.4s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
+
+/* ═══ MAIN ═══ */
+.main{padding:0 11px 100px;}
+.grp-hdr{display:flex;align-items:center;gap:9px;padding:16px 3px 8px;}
+.grp-line{flex:1;height:1px;background:linear-gradient(90deg,var(--b3),transparent);}
+.grp-lbl{font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:2px;}
+.grp-cnt{background:var(--s3);padding:2px 6px;border-radius:7px;font-size:9px;font-weight:700;color:var(--t2);}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+
+/* ═══ CARD ═══ */
+.card{background:var(--s2);border:1px solid var(--b2);border-radius:var(--r3);padding:12px;position:relative;display:flex;flex-direction:column;gap:5px;transition:border-color .18s,transform .12s;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--b3),transparent);}
+.card:active{transform:scale(0.977);}
+.card.low{border-color:rgba(240,68,68,0.35);background:linear-gradient(155deg,var(--s2),rgba(240,68,68,0.06));}
+.card.mt{opacity:0.44;}
+.c-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red);animation:blink 1.4s ease infinite;}
+.c-ref{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--gold);letter-spacing:0.4px;}
+.c-name{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.25;}
+.c-compat{font-size:10px;color:var(--t2);line-height:1.4;flex:1;}
+.c-tag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:var(--r1);width:fit-content;text-transform:uppercase;letter-spacing:0.4px;}
+.qty-row{display:flex;align-items:center;justify-content:space-between;margin-top:5px;padding-top:8px;border-top:1px solid var(--b1);}
+.qty-btns{display:flex;align-items:center;gap:9px;}
+.qbtn{width:32px;height:32px;border-radius:50%;background:var(--s3);border:1px solid var(--b3);color:var(--t1);font-size:16px;font-weight:400;display:flex;align-items:center;justify-content:center;transition:all .12s;user-select:none;}
+.qbtn:active{background:var(--gold);color:var(--s0);border-color:var(--gold);transform:scale(0.87);}
+.qnum{font-family:var(--mono);font-size:20px;font-weight:700;min-width:28px;text-align:center;}
+.qnum.ok{color:var(--green);} .qnum.low{color:var(--red);} .qnum.mt{color:var(--t4);}
+.c-btns{display:flex;gap:4px;margin-top:3px;}
+.cbtn{flex:1;padding:6px 0;border-radius:var(--r1);border:1px solid var(--b2);background:var(--s3);color:var(--t2);font-size:10px;font-weight:600;transition:all .12s;}
+.cbtn:active{background:var(--s4);}
+.cbtn.del{color:var(--red);border-color:rgba(240,68,68,0.22);}
+.cbtn.del:active{background:var(--red-g);}
+
+/* Empty */
+.empty{grid-column:1/-1;text-align:center;padding:60px 20px;}
+.empty-ico{width:56px;height:56px;margin:0 auto 14px;background:var(--s3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--t4);}
+.empty-ico svg{width:26px;height:26px;}
+.empty-t{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:4px;}
+.empty-s{font-size:11px;color:var(--t3);}
+
+/* ═══ MODAL / SHEET ═══ */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,0.74);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:200;display:flex;align-items:flex-end;animation:fIn .16s ease;}
+@keyframes fIn{from{opacity:0;}to{opacity:1;}}
+.sheet{background:var(--s2);border-radius:var(--r5) var(--r5) 0 0;width:100%;max-height:93vh;overflow-y:auto;padding:0 18px calc(18px + var(--sab));border-top:1px solid var(--b3);animation:sUp .26s cubic-bezier(0.32,0.72,0,1);}
+@keyframes sUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sh-handle{width:34px;height:4px;border-radius:2px;background:var(--b4);margin:13px auto 16px;}
+.sh-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:20px;background:linear-gradient(135deg,var(--t1),var(--t2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.fld{margin-bottom:13px;}
+.fld-lbl{display:block;font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.fld-inp,.fld-sel,.fld-ta{width:100%;background:var(--s3);border:1px solid var(--b3);border-radius:var(--r2);color:var(--t1);font-size:15px;padding:12px 14px;outline:none;-webkit-appearance:none;transition:border-color .18s,box-shadow .18s;}
+.fld-inp:focus,.fld-sel:focus,.fld-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-g2);}
+.fld-inp::placeholder,.fld-ta::placeholder{color:var(--t3);}
+.fld-ta{height:70px;resize:none;line-height:1.5;}
+.fld-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sh-btns{display:flex;gap:9px;margin-top:20px;}
+.sh-btn{flex:1;padding:14px;border-radius:var(--r3);border:none;font-size:14px;font-weight:700;transition:all .12s;}
+.sh-btn:active{transform:scale(0.97);}
+.sh-btn.cancel{background:var(--s3);color:var(--t2);}
+.sh-btn.ok{background:var(--gold);color:var(--s0);box-shadow:0 3px 12px var(--gold-g);}
+.sh-btn.teal{background:var(--teal);color:var(--s0);}
+
+/* ═══ RÉCEPTION MODE ═══ */
+.rec-banner{background:linear-gradient(135deg,rgba(32,184,160,0.15),rgba(32,184,160,0.05));border-bottom:1px solid rgba(32,184,160,0.25);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.rec-banner-ico{font-size:20px;flex-shrink:0;}
+.rec-banner-txt{flex:1;}
+.rec-banner-title{font-size:12px;font-weight:700;color:var(--teal);margin-bottom:1px;}
+.rec-banner-sub{font-size:10px;color:var(--t2);}
+.rec-banner-close{background:none;border:none;color:var(--t3);font-size:16px;padding:2px 4px;}
+
+/* Réception items */
+.rec-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1);}
+.rec-item:last-child{border-bottom:none;}
+.rec-item-info{flex:1;}
+.rec-item-ref{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--gold);}
+.rec-item-name{font-size:12px;color:var(--t1);margin-top:1px;}
+.rec-item-status{font-size:10px;color:var(--t3);margin-top:1px;}
+.rec-qty-ctrl{display:flex;align-items:center;gap:7px;}
+.rec-qbtn{width:28px;height:28px;border-radius:50%;background:var(--s3);border:1px solid var(--b3);color:var(--t1);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.rec-qbtn:active{background:var(--teal);color:var(--s0);border-color:var(--teal);transform:scale(0.88);}
+.rec-qnum{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--teal);min-width:24px;text-align:center;}
+.rec-new-badge{font-size:9px;font-weight:700;background:var(--gold-g);color:var(--gold);border:1px solid rgba(212,168,75,0.3);padding:2px 6px;border-radius:6px;}
+
+/* AI Import zone */
+.ai-zone{background:linear-gradient(135deg,var(--s3),var(--s4));border:1px solid var(--b3);border-radius:var(--r3);padding:16px;margin-bottom:14px;}
+.ai-zone-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ai-zone-title svg{width:14px;height:14px;}
+.ai-zone-sub{font-size:11px;color:var(--t2);margin-bottom:12px;line-height:1.5;}
+.ai-ta{width:100%;background:var(--s2);border:1px solid var(--b3);border-radius:var(--r2);color:var(--t1);font-size:12px;font-family:var(--mono);padding:11px;outline:none;height:110px;resize:none;line-height:1.5;}
+.ai-ta:focus{border-color:var(--gold);}
+.ai-ta::placeholder{color:var(--t3);}
+.ai-btns{display:flex;gap:8px;margin-top:10px;}
+.ai-btn{flex:1;padding:11px;border-radius:var(--r2);border:none;font-size:12px;font-weight:700;transition:all .12s;}
+.ai-btn:active{transform:scale(0.96);}
+.ai-btn.parse{background:var(--gold);color:var(--s0);}
+.ai-btn.upload{background:var(--s4);border:1px solid var(--b3);color:var(--t2);}
+
+/* AI Loading */
+.ai-loading{display:flex;align-items:center;gap:10px;padding:14px;background:var(--s3);border-radius:var(--r2);margin-top:10px;}
+.ai-spinner{width:18px;height:18px;border:2px solid var(--b3);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-loading-txt{font-size:12px;color:var(--t2);}
+
+/* Color picker */
+.cpicker{display:flex;gap:7px;flex-wrap:wrap;margin-top:5px;}
+.cdot{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .13s;display:flex;align-items:center;justify-content:center;}
+.cdot.sel{border-color:#fff;transform:scale(1.18);}
+.cdot svg{width:12px;height:12px;color:rgba(0,0,0,0.55);opacity:0;}
+.cdot.sel svg{opacity:1;}
+
+/* Cat manager */
+.cat-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--b1);}
+.cat-item:last-child{border-bottom:none;}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cat-ico{font-size:17px;flex-shrink:0;}
+.cat-name{flex:1;font-size:13px;font-weight:600;color:var(--t1);}
+.cat-cnt{font-size:10px;color:var(--t3);font-family:var(--mono);}
+.cat-del{background:none;border:none;color:var(--t3);width:30px;height:30px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .12s;}
+.cat-del:active{background:var(--red-g);color:var(--red);}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(18px + var(--sab));left:50%;transform:translateX(-50%) translateY(80px);background:var(--s4);border:1px solid var(--b3);border-radius:var(--r6);padding:10px 20px;font-size:13px;font-weight:600;z-index:400;opacity:0;pointer-events:none;transition:transform .22s cubic-bezier(0.32,0.72,0,1),opacity .22s;box-shadow:0 8px 32px rgba(0,0,0,0.55);white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.ok{border-color:rgba(46,196,96,0.38);}
+.toast.ok::before{content:'✓';color:var(--green);}
+.toast.err{border-color:rgba(240,68,68,0.38);}
+.toast.err::before{content:'✕';color:var(--red);}
+.toast.info::before{content:'✦';color:var(--gold);}
+
+/* Install banner */
+.install-bn{background:linear-gradient(135deg,var(--s3),var(--s4));border-bottom:1px solid var(--b2);padding:11px 14px;display:flex;align-items:flex-start;gap:11px;}
+.install-bn-ico{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px var(--gold-g);}
+.install-bn-ico svg{width:18px;height:18px;color:var(--s0);}
+.install-bn-txt{flex:1;}
+.install-bn-title{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:2px;}
+.install-bn-sub{font-size:10.5px;color:var(--t2);line-height:1.4;}
+.install-bn-close{background:none;border:none;color:var(--t3);font-size:17px;padding:0 3px;flex-shrink:0;margin-top:-1px;}
+
+.hidden{display:none!important;}
+@media(max-width:374px){.cards{grid-template-columns:1fr;}}
+@media(min-width:500px){.cards{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:768px){.cards{grid-template-columns:repeat(4,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- INSTALL BANNER -->
+<div id="installBn" class="install-bn hidden">
+  <div class="install-bn-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18" stroke-width="3" stroke-linecap="round"/></svg></div>
+  <div class="install-bn-txt">
+    <div class="install-bn-title">📲 Installer l'app sur l'écran d'accueil</div>
+    <div class="install-bn-sub">Safari → <strong>Partager ↑</strong> → <strong>"Sur l'écran d'accueil"</strong> → sauvegarde permanente activée</div>
+  </div>
+  <button class="install-bn-close" onclick="dismissBn()">✕</button>
+</div>
+
+<!-- RÉCEPTION BANNER -->
+<div id="recBanner" class="rec-banner hidden">
+  <div class="rec-banner-ico">📦</div>
+  <div class="rec-banner-txt">
+    <div class="rec-banner-title">Mode Réception actif</div>
+    <div class="rec-banner-sub">Ajuste les quantités reçues puis confirme</div>
+  </div>
+  <button class="rec-banner-close" onclick="closeRec()">✕</button>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-row">
+      <div class="brand">
+        <div class="brand-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-name">NeuAutoStock</div>
+          <div class="brand-sub">Serrurerie Auto</div>
+        </div>
+      </div>
+      <div class="hdr-btns">
+        <button class="hbtn hbtn-reception" onclick="openRec()" title="Réception commande">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Réception
+        </button>
+        <button class="hbtn" onclick="openCatMgr()" title="Catégories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="hbtn" onclick="openImport()" title="Importer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </button>
+        <button class="hbtn" onclick="exportData()" title="Exporter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <button class="hbtn hbtn-gold" onclick="openAdd()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </button>
+      </div>
+    </div>
+    <div class="srch-wrap" id="sw">
+      <span class="srch-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" class="srch-inp" id="si" placeholder="Référence, marque, modèle…" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button class="srch-clr" onclick="clrSearch()">✕</button>
+    </div>
+    <div class="tabs-wrap"><div class="tabs" id="tabs"></div></div>
+  </div>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<section class="quick" id="quick">
+  <div class="quick-hdr" onclick="togQ()">
+    <span class="quick-lbl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Vue rapide
+    </span>
+    <button class="quick-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></button>
+  </div>
+  <div class="quick-grid" id="qg"></div>
+</section>
+
+<main class="main" id="main"></main>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Add/Edit -->
+<div class="ov hidden" id="itemOv" onclick="closeItem(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <h2 class="sh-title" id="itemTitle">Nouvel article</h2>
+    <div class="fld"><label class="fld-lbl">Référence *</label><input type="text" class="fld-inp" id="fRef" placeholder="ex: XKTO00EN, HU66…" autocorrect="off" autocapitalize="characters"></div>
+    <div class="fld"><label class="fld-lbl">Désignation</label><input type="text" class="fld-inp" id="fNom" placeholder="ex: Télécom. Toyota XK" autocorrect="off"></div>
+    <div class="fld"><label class="fld-lbl">Catégorie</label><select class="fld-sel" id="fCat"></select></div>
+    <div class="fld"><label class="fld-lbl">Compatibilités / Notes</label><textarea class="fld-ta" id="fCompat" placeholder="ex: Toyota Yaris, Corolla, Auris…"></textarea></div>
+    <div class="fld-row">
+      <div class="fld"><label class="fld-lbl">Quantité</label><input type="number" class="fld-inp" id="fQty" min="0" value="1" inputmode="numeric"></div>
+      <div class="fld"><label class="fld-lbl">Seuil alerte</label><input type="number" class="fld-inp" id="fSeuil" min="0" value="2" inputmode="numeric"></div>
+    </div>
+    <div class="sh-btns">
+      <button class="sh-btn cancel" onclick="closeItem()">Annuler</button>
+      <button class="sh-btn ok" onclick="saveItem()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mode Réception -->
+<div class="ov hidden" id="recOv" onclick="closeRecOv(event)">
+  <div class="sheet" onclick="event.stopPropagation()" style="max-height:95vh">
+    <div class="sh-handle"></div>
+    <h2 class="sh-title">📦 Réception de commande</h2>
+
+    <!-- Zone IA / texte AliExpress -->
+    <div class="ai-zone">
+      <div class="ai-zone-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="4" fill="currentColor" stroke="none" style="color:var(--gold)"/></svg>
+        Import intelligent — colle ta commande AliExpress
+      </div>
+      <div class="ai-zone-sub">Copie le texte de ta commande ou de ta facture AliExpress et colle-le ci-dessous. L'IA détecte automatiquement les références et quantités.</div>
+      <textarea class="ai-ta" id="aiText" placeholder="Exemple :&#10;10x XKTO00EN Toyota Wired Remote&#10;5x XNHO00EN Honda Wireless&#10;20x CR2032 pile&#10;...&#10;&#10;Ou n'importe quel format texte avec références et quantités."></textarea>
+      <div class="ai-btns">
+        <button class="ai-btn upload" onclick="document.getElementById('imgIn').click()">📷 Photo/PDF</button>
+        <button class="ai-btn parse" onclick="parseAI()">✦ Analyser avec IA</button>
+      </div>
+      <input type="file" id="imgIn" accept="image/*,application/pdf" style="display:none" onchange="loadImg(event)">
+      <div class="ai-loading hidden" id="aiLoading">
+        <div class="ai-spinner"></div>
+        <div class="ai-loading-txt">Analyse en cours…</div>
+      </div>
+    </div>
+
+    <!-- Liste réception -->
+    <div id="recList"></div>
+
+    <div class="sh-btns" id="recBtns" style="display:none">
+      <button class="sh-btn cancel" onclick="closeRecOv()">Annuler</button>
+      <button class="sh-btn teal" onclick="confirmRec()">✓ Valider la réception</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cat Manager -->
+<div class="ov hidden" id="catOv" onclick="closeCatMgr(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <h2 class="sh-title">Catégories</h2>
+    <div id="catList"></div>
+    <div class="sh-btns" style="margin-top:14px">
+      <button class="sh-btn ok" onclick="openAddCat()">+ Nouvelle catégorie</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Cat -->
+<div class="ov hidden" id="addCatOv" onclick="closeAddCat(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <h2 class="sh-title">Nouvelle catégorie</h2>
+    <div class="fld"><label class="fld-lbl">Nom</label><input type="text" class="fld-inp" id="catNm" placeholder="ex: Antidémarrage" autocorrect="off"></div>
+    <div class="fld"><label class="fld-lbl">Emoji</label><input type="text" class="fld-inp" id="catIco" placeholder="ex: 🔒" maxlength="4"></div>
+    <div class="fld"><label class="fld-lbl">Couleur</label><div class="cpicker" id="cpicker"></div></div>
+    <div class="sh-btns">
+      <button class="sh-btn cancel" onclick="closeAddCat()">Annuler</button>
+      <button class="sh-btn ok" onclick="saveCat()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import -->
+<div class="ov hidden" id="importOv" onclick="closeImport(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <h2 class="sh-title">Charger sauvegarde</h2>
+    <div style="background:var(--s3);border:2px dashed var(--b3);border-radius:var(--r3);padding:22px;text-align:center;margin-bottom:14px;cursor:pointer" onclick="document.getElementById('jsonIn').click()">
+      <div style="font-size:26px;margin-bottom:7px">📂</div>
+      <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:2px">Sélectionner fichier .json</div>
+      <div style="font-size:10px;color:var(--t3)">Exporté depuis NeuAutoStock</div>
+    </div>
+    <input type="file" id="jsonIn" accept=".json" style="display:none" onchange="loadJson(event)">
+    <div style="text-align:center;font-size:10px;color:var(--t3);margin-bottom:9px">— ou coller le JSON —</div>
+    <textarea class="fld-ta" id="importTxt" placeholder="Coller ici…" style="height:90px;font-size:11px;font-family:var(--mono)"></textarea>
+    <div class="sh-btns">
+      <button class="sh-btn cancel" onclick="closeImport()">Annuler</button>
+      <button class="sh-btn ok" onclick="doImport()">Charger</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════ STORAGE ════════════
+const DB='NeuAS3',DBV=1; let _db=null,_eng='ram';
+function _odb(){return new Promise((r,j)=>{if(!window.indexedDB)return j();const q=indexedDB.open(DB,DBV);q.onupgradeneeded=e=>{const d=e.target.result;['items','cats'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});});};q.onsuccess=e=>{_db=e.target.result;r(_db);};q.onerror=()=>j();});}
+function _iget(s){return new Promise((r,j)=>{const q=_db.transaction(s,'readonly').objectStore(s).getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>j();});}
+function _iput(s,d){return new Promise((r,j)=>{const tx=_db.transaction(s,'readwrite'),st=tx.objectStore(s);st.clear();d.forEach(i=>st.put(i));tx.oncomplete=()=>r();tx.onerror=()=>j();});}
+function _lsg(k){try{const d=localStorage.getItem(k);return d?JSON.parse(d):null;}catch(e){return null;}}
+function _lss(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+
+// ════════════ DEFAULT DATA ════════════
+const DC=[
+  {id:'lame',name:'Lames',icon:'🔑',color:'#4488ff'},
+  {id:'telecommande',name:'Télécom.',icon:'📡',color:'#30c060'},
+  {id:'xhorse-xk',name:'XK Filaire',icon:'🔌',color:'#d4a84b'},
+  {id:'xhorse-xn',name:'XN Sans-fil',icon:'📶',color:'#f09020'},
+  {id:'xhorse-smart',name:'Smart Key',icon:'🗝',color:'#9060f0'},
+  {id:'transpondeur',name:'Transpond.',icon:'📟',color:'#20b8a0'},
+  {id:'lishi',name:'Lishi',icon:'🔧',color:'#e04060'},
+  {id:'pile',name:'Piles',icon:'🔋',color:'#60a0f0'},
+];
+
+const DI=[
+  // ── LAMES ──
+  {id:1,ref:'HU66',nom:'Lame HU66',cat:'lame',compat:'VW Golf IV-VII, Polo, Passat, Audi A3/A4, Seat, Skoda',qte:0,seuil:3},
+  {id:2,ref:'HU100',nom:'Lame HU100',cat:'lame',compat:'VW Touareg, Porsche Cayenne, Phaeton',qte:0,seuil:2},
+  {id:3,ref:'HU162T',nom:'Lame HU162T laser',cat:'lame',compat:'Audi A3/A4/Q7 2016+, VW Golf VII/VIII',qte:0,seuil:2},
+  {id:4,ref:'VA6',nom:'Lame VA6',cat:'lame',compat:'Renault Clio III, Mégane II, Kangoo, Laguna',qte:0,seuil:3},
+  {id:5,ref:'VA2',nom:'Lame VA2 fraisée',cat:'lame',compat:'Renault Laguna II/III, Espace IV',qte:0,seuil:2},
+  {id:6,ref:'NE73',nom:'Lame NE73',cat:'lame',compat:'Renault Trafic II, Kangoo I, Master',qte:0,seuil:2},
+  {id:7,ref:'SX9',nom:'Lame SX9',cat:'lame',compat:'Peugeot 206/207/307/308, Citroën C3/C4, Berlingo',qte:0,seuil:3},
+  {id:8,ref:'HCA',nom:'Lame HCA / SIP22',cat:'lame',compat:'Peugeot 3008/5008/508, Citroën C5/C6, DS',qte:0,seuil:2},
+  {id:9,ref:'MIT11',nom:'Lame MIT11',cat:'lame',compat:'Citroën C1/C2/C3, Peugeot 107/207 2005-2012',qte:0,seuil:2},
+  {id:10,ref:'FO21',nom:'Lame FO21',cat:'lame',compat:'Ford Fiesta, Focus, C-Max, Fusion 2001-2012',qte:0,seuil:2},
+  {id:11,ref:'FO38',nom:'Lame FO38',cat:'lame',compat:'Ford Mondeo IV, S-Max, Galaxy 2007+',qte:0,seuil:2},
+  {id:12,ref:'YM28',nom:'Lame YM28',cat:'lame',compat:'Opel Astra, Corsa, Insignia, Zafira',qte:0,seuil:2},
+  {id:13,ref:'TOY43',nom:'Lame TOY43',cat:'lame',compat:'Toyota Yaris, Corolla, Auris, Avensis',qte:0,seuil:2},
+  {id:14,ref:'HU92',nom:'Lame HU92',cat:'lame',compat:'BMW Série 1/3/5/X3/X5 E46/E90/E60',qte:0,seuil:2},
+  {id:15,ref:'HU64',nom:'Lame HU64',cat:'lame',compat:'BMW F-Series, Série 1/2/3/4/5 2013+',qte:0,seuil:2},
+  {id:16,ref:'HU100R',nom:'Lame HU100R laser',cat:'lame',compat:'BMW G-Series 2018+, Mini F-Series',qte:0,seuil:2},
+  {id:17,ref:'NSN14',nom:'Lame NSN14',cat:'lame',compat:'Nissan Micra, Almera, Qashqai, Note',qte:0,seuil:2},
+  {id:18,ref:'HON66',nom:'Lame HON66',cat:'lame',compat:'Honda Civic, Jazz, CR-V, Accord 2002-2014',qte:0,seuil:2},
+  {id:19,ref:'KIA1',nom:'Lame Kia/Hyundai',cat:'lame',compat:"Kia Rio, Cee'd, Sportage, Hyundai i20/i30/Tucson",qte:0,seuil:2},
+  {id:20,ref:'MAZ24',nom:'Lame MAZ24',cat:'lame',compat:'Mazda 2/3/6, CX-5, MX-5',qte:0,seuil:2},
+  {id:21,ref:'VAC102',nom:'Lame Dacia',cat:'lame',compat:'Dacia Logan, Sandero, Duster, Dokker',qte:0,seuil:2},
+  {id:22,ref:'GT15',nom:'Lame GT15 / SIP6',cat:'lame',compat:'Alfa Romeo, Fiat Stilo, Bravo, Lancia',qte:0,seuil:2},
+  {id:23,ref:'HU133R',nom:'Lame Suzuki',cat:'lame',compat:'Suzuki Swift, Vitara, Alto 2010+',qte:0,seuil:2},
+  {id:24,ref:'MIT8',nom:'Lame MIT8',cat:'lame',compat:'Mitsubishi Colt, Outlander, Pajero',qte:0,seuil:2},
+  {id:25,ref:'NE78',nom:'Lame NE78',cat:'lame',compat:'Peugeot 106/206 avant 2002, Citroën Saxo',qte:0,seuil:2},
+  // ── XK FILAIRE XHORSE ──
+  {id:100,ref:'XKTO00EN',nom:'XK Toyota 2B flip',cat:'xhorse-xk',compat:'Toyota style, 2 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:101,ref:'XKTO01EN',nom:'XK Toyota 2B flip v2',cat:'xhorse-xk',compat:'Toyota style, 2 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:102,ref:'XKTO02EN',nom:'XK Toyota 3B',cat:'xhorse-xk',compat:'Toyota style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:103,ref:'XKTO03EN',nom:'XK Toyota 4B',cat:'xhorse-xk',compat:'Toyota style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:104,ref:'XKTO04EN',nom:'XK Toyota 3B flip v2',cat:'xhorse-xk',compat:'Toyota style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:105,ref:'XKTO05EN',nom:'XK Toyota 4B flip',cat:'xhorse-xk',compat:'Toyota style, 4 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:106,ref:'XKTO08EN',nom:'XK Toyota 3B v3',cat:'xhorse-xk',compat:'Toyota style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:107,ref:'XKHO00EN',nom:'XK Honda 3B flip',cat:'xhorse-xk',compat:'Honda style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:108,ref:'XKHO01EN',nom:'XK Honda 4B',cat:'xhorse-xk',compat:'Honda style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:109,ref:'XKHO02EN',nom:'XK Honda 3B flip v2',cat:'xhorse-xk',compat:'Honda style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:110,ref:'XKHO03EN',nom:'XK Honda 3B v2',cat:'xhorse-xk',compat:'Honda style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:111,ref:'XKHO04EN',nom:'XK Honda 5B',cat:'xhorse-xk',compat:'Honda style, 5 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:112,ref:'XKHY00EN',nom:'XK Hyundai/Kia 3B',cat:'xhorse-xk',compat:'Hyundai/Kia style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:113,ref:'XKHY01EN',nom:'XK Hyundai 4B',cat:'xhorse-xk',compat:'Hyundai style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:114,ref:'XKHY02EN',nom:'XK Hyundai 3B flip',cat:'xhorse-xk',compat:'Hyundai style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:115,ref:'XKHY04EN',nom:'XK Hyundai 4B v2',cat:'xhorse-xk',compat:'Hyundai style, 4 boutons v2, filaire VVDI',qte:0,seuil:2},
+  {id:116,ref:'XKHY05EN',nom:'XK Hyundai 5B',cat:'xhorse-xk',compat:'Hyundai style, 5 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:117,ref:'XKB501EN',nom:'XK VW B5 3B noir',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons, noir, filaire VVDI',qte:0,seuil:2},
+  {id:118,ref:'XKB502EN',nom:'XK VW B5 3B rouge',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons, rouge, filaire VVDI',qte:0,seuil:2},
+  {id:119,ref:'XKB503EN',nom:'XK VW B5 3B jaune',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons, jaune, filaire VVDI',qte:0,seuil:2},
+  {id:120,ref:'XKB504EN',nom:'XK VW B5 3B bleu',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons, bleu, filaire VVDI',qte:0,seuil:2},
+  {id:121,ref:'XKB505EN',nom:'XK VW B5 3B vert',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons, vert, filaire VVDI',qte:0,seuil:2},
+  {id:122,ref:'XKB506EN',nom:'XK VW B5 3B flip',cat:'xhorse-xk',compat:'VW B5 style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:123,ref:'XKB508EN',nom:'XK VW B5 2B flip',cat:'xhorse-xk',compat:'VW B5 style, 2 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:124,ref:'XKB510EN',nom:'XK VW MQB 3B flip',cat:'xhorse-xk',compat:'VW MQB style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:125,ref:'XKDS00EN',nom:'XK DS/Citroën 3B',cat:'xhorse-xk',compat:'DS/Citroën style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:126,ref:'XKMQB1EN',nom:'XK MQB flip 3B',cat:'xhorse-xk',compat:'MQB style, 3 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:127,ref:'XKFO01EN',nom:'XK Ford 3B',cat:'xhorse-xk',compat:'Ford style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:128,ref:'XKFO02EN',nom:'XK Ford 4B',cat:'xhorse-xk',compat:'Ford style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:129,ref:'XKNI00EN',nom:'XK Nissan 4B',cat:'xhorse-xk',compat:'Nissan style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:130,ref:'XKAU01EN',nom:'XK Audi 3B',cat:'xhorse-xk',compat:'Audi style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:131,ref:'XKAU02EN',nom:'XK Audi 4B',cat:'xhorse-xk',compat:'Audi style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:132,ref:'XKA600EN',nom:'XK Audi A6 3B',cat:'xhorse-xk',compat:'Audi A6 style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:133,ref:'XKMA00EN',nom:'XK Mazda 3B',cat:'xhorse-xk',compat:'Mazda style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:134,ref:'XKBU01EN',nom:'XK Buick 4B',cat:'xhorse-xk',compat:'Buick style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:135,ref:'XKBU02EN',nom:'XK Buick 3B',cat:'xhorse-xk',compat:'Buick style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:136,ref:'XKBU03EN',nom:'XK Buick 5B',cat:'xhorse-xk',compat:'Buick style, 5 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:137,ref:'XKCD02EN',nom:'XK Cadillac 4B flip',cat:'xhorse-xk',compat:'Cadillac style, 4 boutons flip, filaire VVDI',qte:0,seuil:2},
+  {id:138,ref:'XKLEX0EN',nom:'XK Lexus 4B',cat:'xhorse-xk',compat:'Lexus style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:139,ref:'XKLKS0EN',nom:'XK Lancer 3B',cat:'xhorse-xk',compat:'Mitsubishi Lancer style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:140,ref:'XKKF02EN',nom:'XK Knife style 3B',cat:'xhorse-xk',compat:'Knife style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:141,ref:'XKKF03EN',nom:'XK Knife style flip 3B',cat:'xhorse-xk',compat:'Knife style flip, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:142,ref:'XKKF20EN',nom:'XK Knife style v2',cat:'xhorse-xk',compat:'Knife style v2, filaire VVDI',qte:0,seuil:2},
+  {id:143,ref:'XKKF21EN',nom:'XK Knife style flip v2',cat:'xhorse-xk',compat:'Knife style flip v2, filaire VVDI',qte:0,seuil:2},
+  {id:144,ref:'XKXH00EN',nom:'XK Shell 3B',cat:'xhorse-xk',compat:'Shell universal style, 3 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:145,ref:'XKXH01EN',nom:'XK Shell 4B',cat:'xhorse-xk',compat:'Shell universal style, 4 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:146,ref:'XKXH02EN',nom:'XK Shell 5B',cat:'xhorse-xk',compat:'Shell universal style, 5 boutons, filaire VVDI',qte:0,seuil:2},
+  {id:147,ref:'XKFEF1EN',nom:'XK Ferrari 3B',cat:'xhorse-xk',compat:'Ferrari style, 3 boutons, filaire VVDI',qte:0,seuil:1},
+  {id:148,ref:'XKFEF2EN',nom:'XK Ferrari 4B',cat:'xhorse-xk',compat:'Ferrari style, 4 boutons, filaire VVDI',qte:0,seuil:1},
+  // ── XN SANS-FIL XHORSE ──
+  {id:200,ref:'XNTO00EN',nom:'XN Toyota sans-fil 3B',cat:'xhorse-xn',compat:'Toyota style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:201,ref:'XNHO00EN',nom:'XN Honda sans-fil 3B',cat:'xhorse-xn',compat:'Honda style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:202,ref:'XNDS00EN',nom:'XN DS sans-fil 3B',cat:'xhorse-xn',compat:'DS/Citroën style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:203,ref:'XNAU01EN',nom:'XN Audi sans-fil 3B',cat:'xhorse-xn',compat:'Audi style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:204,ref:'XNAU02EN',nom:'XN Audi sans-fil 4B',cat:'xhorse-xn',compat:'Audi style, 4B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:205,ref:'XNHY02EN',nom:'XN Hyundai sans-fil 3B',cat:'xhorse-xn',compat:'Hyundai/Kia style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:206,ref:'XNBU01EN',nom:'XN Buick sans-fil 4B',cat:'xhorse-xn',compat:'Buick style, 4B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:207,ref:'XNFO01EN',nom:'XN Ford sans-fil 3B',cat:'xhorse-xn',compat:'Ford style, 3B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:208,ref:'XNLEX0EN',nom:'XN Lexus sans-fil 4B',cat:'xhorse-xn',compat:'Lexus style, 4B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:209,ref:'XNSZ01EN',nom:'XN Suzuki sans-fil 2B',cat:'xhorse-xn',compat:'Suzuki style, 2B, sans-fil avec transpondeur NXP',qte:0,seuil:2},
+  {id:210,ref:'XNBZ01EN',nom:'XN Mercedes BE Key',cat:'xhorse-xn',compat:'Mercedes BE Key PCB, 315/433 MHz, sans-fil VVDI',qte:0,seuil:2},
+  // ── SMART KEY XHORSE ──
+  {id:300,ref:'XSMQB1EN',nom:'Smart Key MQB universel',cat:'xhorse-smart',compat:'VW/Audi MQB, remplace proximité 46/47/48/49/4A',qte:0,seuil:2},
+  {id:301,ref:'XSCS00EN',nom:'Smart Key Crystal 4B',cat:'xhorse-smart',compat:'Universel Crystal style, Honda/Buick/Ford/Cadillac/Nissan/Mitsubishi',qte:0,seuil:2},
+  {id:302,ref:'XSTO01EN',nom:'Smart Key Toyota ALL-IN-ONE',cat:'xhorse-smart',compat:'Toyota 4D/8A/4A, 312-434 MHz, clonage/génération/urgence',qte:0,seuil:2},
+  {id:303,ref:'XSVW01EN',nom:'Smart Key VW universel',cat:'xhorse-smart',compat:'VW/Seat/Skoda proximity, simulation MQB 48',qte:0,seuil:2},
+  {id:304,ref:'XSHYQ1EN',nom:'Smart Key Hyundai/Kia 4B',cat:'xhorse-smart',compat:'Hyundai/Kia proximity 4 boutons, simulation 46/47/48',qte:0,seuil:2},
+  // ── TRANSPONDEURS ──
+  {id:400,ref:'ID11',nom:'Transpondeur ID11',cat:'transpondeur',compat:'Renault 1992-1998, Citroën, Peugeot ancien',qte:0,seuil:3},
+  {id:401,ref:'ID13',nom:'Transpondeur ID13',cat:'transpondeur',compat:'Peugeot 206 1998-2002, Citroën Saxo',qte:0,seuil:3},
+  {id:402,ref:'ID33',nom:'Transpondeur ID33 crypto',cat:'transpondeur',compat:'Renault Clio II, Kangoo, Mégane I',qte:0,seuil:3},
+  {id:403,ref:'ID46',nom:'Transpondeur ID46',cat:'transpondeur',compat:'Citroën, Peugeot, Renault, Nissan, VW 2000-2010',qte:0,seuil:3},
+  {id:404,ref:'ID48',nom:'Transpondeur ID48 crypto',cat:'transpondeur',compat:'VW, Audi, Seat, Skoda 2001-2018',qte:0,seuil:3},
+  {id:405,ref:'ID4D60',nom:'Transpondeur ID4D60',cat:'transpondeur',compat:'Toyota Yaris/Corolla/Avensis/RAV4 2005-2014',qte:0,seuil:3},
+  {id:406,ref:'ID4D63',nom:'Transpondeur ID4D63 80bit',cat:'transpondeur',compat:'Mazda, Subaru, Mitsubishi 2009+',qte:0,seuil:2},
+  {id:407,ref:'ID70',nom:'Transpondeur ID70 Ford',cat:'transpondeur',compat:'Ford Focus/Fiesta/Mondeo 2012+',qte:0,seuil:2},
+  {id:408,ref:'ID8E',nom:'Transpondeur ID8E Audi',cat:'transpondeur',compat:'Audi A4/A5/A6/Q5/Q7 2013+',qte:0,seuil:2},
+  {id:409,ref:'Megamos88',nom:'Megamos Crypto 88',cat:'transpondeur',compat:'VW Golf VII, Polo, Tiguan 2013+',qte:0,seuil:2},
+  {id:410,ref:'VVDI-SB',nom:'Super chip VVDI',cat:'transpondeur',compat:'Clonage universel ID46/48/4D/8E via VVDI',qte:0,seuil:2},
+  {id:411,ref:'XT27A',nom:'XT27A Super chip XE',cat:'transpondeur',compat:'Xhorse XE Super Remote chip 11/12/13/48/4C/4D/4E/8A/8C/8E',qte:0,seuil:2},
+  // ── LISHI ──
+  {id:500,ref:'Lishi HU66',nom:'Lishi 2en1 HU66',cat:'lishi',compat:'VW Golf IV-VII, Audi A3/A4, Seat, Skoda',qte:0,seuil:1},
+  {id:501,ref:'Lishi VA6',nom:'Lishi 2en1 VA6',cat:'lishi',compat:'Renault Clio III, Mégane II, Kangoo, Laguna',qte:0,seuil:1},
+  {id:502,ref:'Lishi SX9',nom:'Lishi 2en1 SX9',cat:'lishi',compat:'Peugeot 206/207/307/308, Citroën C3/C4',qte:0,seuil:1},
+  {id:503,ref:'Lishi HCA',nom:'Lishi 2en1 HCA',cat:'lishi',compat:'Peugeot 3008/5008/508, Citroën C5/C6, DS',qte:0,seuil:1},
+  {id:504,ref:'Lishi FO21',nom:'Lishi 2en1 FO21',cat:'lishi',compat:'Ford Fiesta, Focus, C-Max 2001-2012',qte:0,seuil:1},
+  {id:505,ref:'Lishi YM28',nom:'Lishi 2en1 YM28',cat:'lishi',compat:'Opel Astra H/J, Corsa D, Insignia, Zafira',qte:0,seuil:1},
+  {id:506,ref:'Lishi HU92',nom:'Lishi 2en1 HU92',cat:'lishi',compat:'BMW Série 1/3/5/X3/X5 E-series',qte:0,seuil:1},
+  {id:507,ref:'Lishi HU64',nom:'Lishi 2en1 HU64',cat:'lishi',compat:'BMW F-Series, Série 1/2/3/4/5 2013+',qte:0,seuil:1},
+  {id:508,ref:'Lishi TOY43',nom:'Lishi 2en1 TOY43',cat:'lishi',compat:'Toyota Yaris, Corolla, Auris, Avensis',qte:0,seuil:1},
+  {id:509,ref:'Lishi NSN14',nom:'Lishi 2en1 NSN14',cat:'lishi',compat:'Nissan Micra K12, Almera, Qashqai, Note',qte:0,seuil:1},
+  {id:510,ref:'Lishi HON66',nom:'Lishi 2en1 HON66',cat:'lishi',compat:'Honda Civic, Jazz, CR-V 2002-2014',qte:0,seuil:1},
+  {id:511,ref:'Lishi KIA1',nom:'Lishi 2en1 KIA1',cat:'lishi',compat:"Kia Rio, Cee'd, Sportage, Hyundai i20/i30",qte:0,seuil:1},
+  // ── PILES ──
+  {id:600,ref:'CR2032',nom:'Pile CR2032',cat:'pile',compat:'VW Golf IV/V/VI, Audi A3/A4, Seat, Skoda, Opel, Renault',qte:0,seuil:10},
+  {id:601,ref:'CR2025',nom:'Pile CR2025',cat:'pile',compat:'Toyota Yaris/Corolla/Auris, Honda Civic/Jazz, Mazda',qte:0,seuil:8},
+  {id:602,ref:'CR2016',nom:'Pile CR2016',cat:'pile',compat:'BMW E-series, Mini, Porsche Cayenne anciens',qte:0,seuil:8},
+  {id:603,ref:'CR1620',nom:'Pile CR1620',cat:'pile',compat:'Peugeot 206/207/307, Citroën C3/C4, Renault Clio III',qte:0,seuil:8},
+  {id:604,ref:'CR1616',nom:'Pile CR1616',cat:'pile',compat:'Nissan Micra K12, Note, Almera',qte:0,seuil:6},
+  {id:605,ref:'CR1632',nom:'Pile CR1632',cat:'pile',compat:'Ford Focus/Fiesta/Mondeo 2007+, C-Max, S-Max',qte:0,seuil:6},
+  {id:606,ref:'CR2450',nom:'Pile CR2450',cat:'pile',compat:'BMW F-Series 2013+, Mini F-Series — Smart key',qte:0,seuil:5},
+  {id:607,ref:'CR2354',nom:'Pile CR2354',cat:'pile',compat:'Mercedes Classe A/B/C/E W203/W211, Vito',qte:0,seuil:5},
+  {id:608,ref:'CR2430',nom:'Pile CR2430',cat:'pile',compat:'Kia, Hyundai — télécommandes 3B récentes',qte:0,seuil:5},
+  {id:609,ref:'CR2412',nom:'Pile CR2412',cat:'pile',compat:'Volkswagen Golf VII/VIII, Polo 2017+, Passat B8',qte:0,seuil:5},
+];
+
+// ════════════ STATE ════════════
+let items=[],cats=[],tab='',editId=null,qCol=false,selColor='#4488ff';
+let recItems=[]; // {id, ref, nom, qty, isNew}
+
+const PAL=['#4488ff','#30c060','#d4a84b','#f09020','#9060f0','#f04040','#20b8a0','#e060a0','#60b0ff','#c0c020'];
+
+// ════════════ INIT ════════════
+async function init(){
+  try{await _odb();_eng='idb';}catch(e){_eng='ls';}
+  let sc=null,si=null;
+  if(_eng==='idb'){try{sc=await _iget('cats');si=await _iget('items');}catch(e){}}
+  else{sc=_lsg('neas_cats');si=_lsg('neas_items');}
+  cats=(sc&&sc.length)?sc:JSON.parse(JSON.stringify(DC));
+  items=(si&&si.length)?si:JSON.parse(JSON.stringify(DI));
+  if(!sc||!sc.length)await saveAll();
+  if(!si||!si.length)await saveAll();
+
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStand=window.navigator.standalone;
+  if(isIOS&&!isStand&&!_lsg('neas_bn'))document.getElementById('installBn').classList.remove('hidden');
+
+  document.getElementById('si').addEventListener('input',function(){
+    document.getElementById('sw').classList.toggle('has-v',this.value.length>0);render();
+  });
+  render();
+}
+
+async function saveAll(){
+  if(_eng==='idb'){try{await _iput('items',items);await _iput('cats',cats);return;}catch(e){}}
+  _lss('neas_items',items);_lss('neas_cats',cats);
+}
+function dismissBn(){_lss('neas_bn',1);document.getElementById('installBn').classList.add('hidden');}
+
+// ════════════ HELPERS ════════════
+function cat(id){return cats.find(c=>c.id===id);}
+function catStyle(cid){const c=cat(cid);if(!c)return{bg:'rgba(255,255,255,0.05)',color:'#666'};return{bg:c.color+'18',color:c.color};}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ════════════ RENDER ════════════
+function renderTabs(){
+  const al=items.filter(i=>i.qte>0&&i.qte<=i.seuil).length;
+  let h=`<button class="tab ${tab===''?'active':''}" onclick="setTab('')">Tout <span class="bdg">${items.length}</span></button>`;
+  h+=cats.map(c=>{const n=items.filter(i=>i.cat===c.id).length;return`<button class="tab ${tab===c.id?'active':''}" onclick="setTab('${c.id}')">${c.icon} ${c.name} <span class="bdg">${n}</span></button>`;}).join('');
+  h+=`<button class="tab t-alert ${tab==='⚠'?'active':''}" onclick="setTab('⚠')">⚠ Alertes <span class="bdg">${al}</span></button>`;
+  document.getElementById('tabs').innerHTML=h;
+}
+function renderStats(){
+  const al=items.filter(i=>i.qte>0&&i.qte<=i.seuil).length;
+  const em=items.filter(i=>i.qte===0).length;
+  const tot=items.reduce((s,i)=>s+i.qte,0);
+  const st=[
+    {v:items.length,l:'Réfs',c:'n'},{v:tot,l:'Stock',c:''},{v:al,l:'Alertes',c:al>0?'a':''},{v:em,l:'Épuisés',c:em>0?'a':''},
+    ...cats.map(c=>({v:items.filter(i=>i.cat===c.id).length,l:c.name,c:'n'}))
+  ];
+  document.getElementById('stats').innerHTML=st.map(s=>`<div class="stat"><div class="stat-v ${s.c}">${s.v}</div><div class="stat-l">${s.l}</div></div>`).join('');
+}
+function renderQuick(){
+  const s=[...items].sort((a,b)=>{
+    const aA=a.qte>0&&a.qte<=a.seuil,bA=b.qte>0&&b.qte<=b.seuil;
+    if(aA&&!bA)return -1;if(!aA&&bA)return 1;
+    if(a.qte===0&&b.qte>0)return 1;if(b.qte===0&&a.qte>0)return -1;
+    return a.ref.localeCompare(b.ref);
+  });
+  document.getElementById('qg').innerHTML=s.map(i=>{
+    const low=i.qte>0&&i.qte<=i.seuil,mt=i.qte===0;
+    return`<div class="qr ${mt?'mt':low?'low':'ok'}" onclick="jump(${i.id})" title="${i.nom}">
+      ${low?'<div class="qr-dot"></div>':''}
+      <div class="qr-ref">${esc(i.ref)}</div>
+      <div class="qr-qty">${i.qte}</div>
+    </div>`;
+  }).join('');
+}
+function renderMain(){
+  const q=document.getElementById('si').value.toLowerCase().trim();
+  let fil=items.filter(i=>{
+    if(tab==='⚠')return i.qte>0&&i.qte<=i.seuil;
+    if(tab&&i.cat!==tab)return false;
+    if(!q)return true;
+    return(i.ref+' '+i.nom+' '+i.compat).toLowerCase().includes(q);
+  });
+  const con=document.getElementById('main');
+  if(!fil.length){con.innerHTML=`<div class="cards"><div class="empty"><div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><div class="empty-t">Aucun article</div><div class="empty-s">Modifiez la recherche</div></div></div>`;return;}
+  let h='';
+  const rg=gi=>`<div class="cards">${gi.map(renderCard).join('')}</div>`;
+  if(!tab||tab==='⚠'){
+    cats.forEach(c=>{const gi=fil.filter(i=>i.cat===c.id);if(!gi.length)return;h+=`<div class="grp-hdr"><span class="grp-lbl">${c.icon} ${c.name}</span><span class="grp-cnt">${gi.length}</span><div class="grp-line"></div></div>${rg(gi)}`;});
+    const oth=fil.filter(i=>!cats.find(c=>c.id===i.cat));
+    if(oth.length)h+=`<div class="grp-hdr"><span class="grp-lbl">Autres</span><span class="grp-cnt">${oth.length}</span><div class="grp-line"></div></div>${rg(oth)}`;
+  }else{h=rg(fil);}
+  con.innerHTML=h;
+}
+function renderCard(i){
+  const low=i.qte>0&&i.qte<=i.seuil,mt=i.qte===0;
+  const st=catStyle(i.cat);
+  return`<div class="card ${mt?'mt':low?'low':''}" id="c${i.id}">
+    ${low?'<div class="c-dot"></div>':''}
+    <div class="c-ref">${esc(i.ref)}</div>
+    <div class="c-name">${esc(i.nom)}</div>
+    <div class="c-compat">${esc(i.compat||'')}</div>
+    <div class="c-tag" style="background:${st.bg};color:${st.color}">${cat(i.cat)?.icon||''} ${cat(i.cat)?.name||i.cat}</div>
+    <div class="qty-row"><div class="qty-btns">
+      <button class="qbtn" onclick="adj(${i.id},-1)">−</button>
+      <span class="qnum ${mt?'mt':low?'low':'ok'}">${i.qte}</span>
+      <button class="qbtn" onclick="adj(${i.id},+1)">+</button>
+    </div></div>
+    <div class="c-btns">
+      <button class="cbtn" onclick="openEdit(${i.id})">✏ Modifier</button>
+      <button class="cbtn del" onclick="delItem(${i.id})">✕</button>
+    </div>
+  </div>`;
+}
+function render(){renderTabs();renderStats();renderQuick();renderMain();}
+
+// ════════════ ACTIONS ════════════
+function setTab(t){tab=t;render();}
+function clrSearch(){document.getElementById('si').value='';document.getElementById('sw').classList.remove('has-v');render();document.getElementById('si').focus();}
+function togQ(){qCol=!qCol;document.getElementById('quick').classList.toggle('col',qCol);}
+function jump(id){tab='';render();setTimeout(()=>{const el=document.getElementById('c'+id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid var(--gold)';setTimeout(()=>el.style.outline='',1400);}},80);}
+
+async function adj(id,d){
+  const i=items.find(x=>x.id===id);if(!i)return;
+  i.qte=Math.max(0,i.qte+d);await saveAll();render();
+  toast((d>0?'+ 1':'− 1')+' · '+i.ref,'ok');
+}
+async function delItem(id){
+  const i=items.find(x=>x.id===id);if(!i)return;
+  if(!confirm(`Supprimer "${i.ref}" ?`))return;
+  items=items.filter(x=>x.id!==id);await saveAll();render();toast('Supprimé : '+i.ref,'err');
+}
+
+// ════════════ ITEM MODAL ════════════
+function buildCatSel(sel){document.getElementById('fCat').innerHTML=cats.map(c=>`<option value="${c.id}" ${c.id===sel?'selected':''}>${c.icon} ${c.name}</option>`).join('');}
+function openAdd(){editId=null;document.getElementById('itemTitle').textContent='Nouvel article';document.getElementById('fRef').value='';document.getElementById('fNom').value='';document.getElementById('fCompat').value='';document.getElementById('fQty').value=1;document.getElementById('fSeuil').value=2;buildCatSel(cats[0]?.id||'');document.getElementById('itemOv').classList.remove('hidden');}
+function openEdit(id){const i=items.find(x=>x.id===id);if(!i)return;editId=id;document.getElementById('itemTitle').textContent="Modifier l'article";document.getElementById('fRef').value=i.ref;document.getElementById('fNom').value=i.nom;document.getElementById('fCompat').value=i.compat||'';document.getElementById('fQty').value=i.qte;document.getElementById('fSeuil').value=i.seuil;buildCatSel(i.cat);document.getElementById('itemOv').classList.remove('hidden');}
+function closeItem(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('itemOv').classList.add('hidden');}
+async function saveItem(){
+  const ref=document.getElementById('fRef').value.trim();
+  if(!ref){toast('Référence obligatoire','err');return;}
+  const d={id:editId||Date.now(),ref,nom:document.getElementById('fNom').value.trim()||ref,cat:document.getElementById('fCat').value,compat:document.getElementById('fCompat').value.trim(),qte:parseInt(document.getElementById('fQty').value)||0,seuil:parseInt(document.getElementById('fSeuil').value)||0};
+  if(editId){const i=items.findIndex(x=>x.id===editId);if(i!==-1)items[i]=d;}else items.push(d);
+  await saveAll();render();closeItem();toast(editId?'Mis à jour':'Ajouté ✓','ok');
+}
+
+// ════════════ MODE RÉCEPTION ════════════
+function openRec(){
+  recItems=items.map(i=>({...i,recQty:0}));
+  renderRecList();
+  document.getElementById('aiText').value='';
+  document.getElementById('aiLoading').classList.add('hidden');
+  document.getElementById('recBtns').style.display='none';
+  document.getElementById('recOv').classList.remove('hidden');
+}
+function closeRecOv(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('recOv').classList.add('hidden');}
+function closeRec(){document.getElementById('recBanner').classList.add('hidden');}
+
+function renderRecList(){
+  const con=document.getElementById('recList');
+  const active=recItems.filter(i=>i.recQty>0||i._new);
+  if(!active.length){con.innerHTML='<div style="color:var(--t3);font-size:12px;text-align:center;padding:16px">Analyse une commande ci-dessus ou ajoute des quantités manuellement</div>';document.getElementById('recBtns').style.display='none';return;}
+  document.getElementById('recBtns').style.display='flex';
+  con.innerHTML=`<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px">Articles à réceptionner (${active.length})</div>`+active.map((i,idx)=>{
+    const st=catStyle(i.cat);
+    return`<div class="rec-item">
+      <div class="rec-item-info">
+        <div class="rec-item-ref">${esc(i.ref)} ${i._new?'<span class="rec-new-badge">NOUVEAU</span>':''}</div>
+        <div class="rec-item-name">${esc(i.nom)}</div>
+        <div class="rec-item-status">Stock actuel : ${i.qte} → après : ${i.qte+i.recQty}</div>
+      </div>
+      <div class="rec-qty-ctrl">
+        <button class="rec-qbtn" onclick="recAdj(${i.id||i._tmpId},-1)">−</button>
+        <span class="rec-qnum">+${i.recQty}</span>
+        <button class="rec-qbtn" onclick="recAdj(${i.id||i._tmpId},+1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function recAdj(id,d){
+  const i=recItems.find(x=>(x.id||x._tmpId)===id);
+  if(!i)return;
+  i.recQty=Math.max(0,i.recQty+d);
+  renderRecList();
+}
+
+async function confirmRec(){
+  const active=recItems.filter(i=>i.recQty>0);
+  if(!active.length)return;
+  for(const ri of active){
+    if(ri._new){
+      items.push({id:Date.now()+Math.random(),ref:ri.ref,nom:ri.nom,cat:ri.cat||cats[0]?.id||'',compat:ri.compat||'',qte:ri.recQty,seuil:ri.seuil||2});
+    }else{
+      const item=items.find(i=>i.id===ri.id);
+      if(item)item.qte+=ri.recQty;
+    }
+  }
+  await saveAll();render();
+  document.getElementById('recOv').classList.add('hidden');
+  document.getElementById('recBanner').classList.remove('hidden');
+  toast(`✓ ${active.length} article(s) réceptionné(s)`,'ok');
+}
+
+// ════════════ IA PARSING ════════════
+let imgB64=null,imgMime=null;
+
+function loadImg(ev){
+  const f=ev.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    imgB64=e.target.result.split(',')[1];
+    imgMime=f.type;
+    document.getElementById('aiText').value='[Image/PDF chargé : '+f.name+']';
+    toast('Image chargée, appuie sur Analyser','info');
+  };
+  r.readAsDataURL(f);
+}
+
+async function parseAI(){
+  const txt=document.getElementById('aiText').value.trim();
+  if(!txt&&!imgB64){toast('Colle du texte ou charge une image','err');return;}
+
+  document.getElementById('aiLoading').classList.remove('hidden');
+
+  // Build all known refs for context
+  const knownRefs=items.map(i=>i.ref).join(', ');
+
+  let messages;
+  if(imgB64&&(txt.includes('[Image') || !txt)){
+    messages=[{role:'user',content:[
+      {type:imgMime==='application/pdf'?'document':'image',source:{type:'base64',media_type:imgMime,data:imgB64}},
+      {type:'text',text:`Tu es un assistant pour serrurerie automobile. Analyse ce document de commande et extrait tous les articles avec leurs quantités. Répertoire connu: ${knownRefs}. Réponds UNIQUEMENT en JSON valide, sans markdown: [{"ref":"XKTO00EN","nom":"XK Toyota 2B","qty":10},...]`}
+    ]}];
+  }else{
+    messages=[{role:'user',content:`Tu es un assistant pour serrurerie automobile. Analyse ce texte de commande AliExpress et extrait tous les articles avec leurs quantités commandées. Répertoire connu: ${knownRefs}. Texte:\n${txt}\n\nRéponds UNIQUEMENT en JSON valide, sans markdown, sans explication: [{"ref":"XKTO00EN","nom":"XK Toyota 2B","qty":10},...]`}];
+  }
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages})
+    });
+    const data=await res.json();
+    const raw=data.content?.map(c=>c.text||'').join('').trim();
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+
+    if(!Array.isArray(parsed)||!parsed.length){toast('Aucun article détecté','err');document.getElementById('aiLoading').classList.add('hidden');return;}
+
+    // Merge into recItems
+    imgB64=null;imgMime=null;
+    for(const p of parsed){
+      const existing=recItems.find(i=>i.ref.toLowerCase()===p.ref.toLowerCase());
+      if(existing){existing.recQty+=p.qty||1;}
+      else{
+        // New item not in stock
+        recItems.push({_tmpId:Date.now()+Math.random(),_new:true,id:null,ref:p.ref,nom:p.nom||p.ref,cat:cats[0]?.id||'',compat:'',qte:0,seuil:2,recQty:p.qty||1});
+      }
+    }
+    renderRecList();
+    toast(`${parsed.length} références détectées`,'ok');
+  }catch(e){
+    toast('Erreur analyse IA','err');
+    console.error(e);
+  }
+  document.getElementById('aiLoading').classList.add('hidden');
+}
+
+// ════════════ CATEGORIES ════════════
+function openCatMgr(){renderCatList();document.getElementById('catOv').classList.remove('hidden');}
+function closeCatMgr(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('catOv').classList.add('hidden');}
+function renderCatList(){
+  document.getElementById('catList').innerHTML=cats.map(c=>{
+    const n=items.filter(i=>i.cat===c.id).length;
+    return`<div class="cat-item"><div class="cat-dot" style="background:${c.color}"></div><div class="cat-ico">${c.icon}</div><div class="cat-name">${esc(c.name)}</div><div class="cat-cnt">${n}</div><button class="cat-del" onclick="delCat('${c.id}')">✕</button></div>`;
+  }).join('')||'<div style="color:var(--t3);text-align:center;padding:18px;font-size:12px">Aucune catégorie</div>';
+}
+async function delCat(id){
+  const c=cats.find(x=>x.id===id),n=items.filter(i=>i.cat===id).length;
+  if(!confirm(`Supprimer "${c?.name}"${n>0?' ? ('+n+' articles affectés)':'?'}`))return;
+  cats=cats.filter(x=>x.id!==id);await saveAll();render();renderCatList();toast('Catégorie supprimée','err');
+}
+function openAddCat(){
+  document.getElementById('catNm').value='';document.getElementById('catIco').value='';selColor=PAL[0];
+  document.getElementById('cpicker').innerHTML=PAL.map(c=>`<div class="cdot ${c===selColor?'sel':''}" style="background:${c}" onclick="selCol('${c}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`).join('');
+  document.getElementById('addCatOv').classList.remove('hidden');
+}
+function closeAddCat(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('addCatOv').classList.add('hidden');}
+function selCol(c){selColor=c;document.querySelectorAll('.cdot').forEach(d=>d.classList.toggle('sel',d.style.background===c));}
+async function saveCat(){
+  const nm=document.getElementById('catNm').value.trim();if(!nm){toast('Nom obligatoire','err');return;}
+  cats.push({id:'cat_'+Date.now(),name:nm,icon:document.getElementById('catIco').value.trim()||'📦',color:selColor});
+  await saveAll();render();closeAddCat();renderCatList();toast('Catégorie créée ✓','ok');
+}
+
+// ════════════ EXPORT / IMPORT ════════════
+function exportData(){
+  const d={version:3,date:new Date().toISOString(),cats,items};
+  const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download='NeuAutoStock_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);
+  toast('Sauvegarde téléchargée ✓','ok');
+}
+function openImport(){document.getElementById('importTxt').value='';document.getElementById('jsonIn').value='';document.getElementById('importOv').classList.remove('hidden');}
+function closeImport(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('importOv').classList.add('hidden');}
+function loadJson(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{document.getElementById('importTxt').value=e.target.result;};r.readAsText(f);}
+async function doImport(){
+  const raw=document.getElementById('importTxt').value.trim();if(!raw){toast('Aucune donnée','err');return;}
+  try{
+    const p=JSON.parse(raw);
+    if(p.items)items=p.items;else if(Array.isArray(p))items=p;else throw 0;
+    if(p.cats)cats=p.cats;
+    await saveAll();closeImport();render();toast(items.length+' articles chargés ✓','ok');
+  }catch(e){toast('Fichier invalide','err');}
+}
+
+// ════════════ TOAST ════════════
+let _tt;
+function toast(msg,type='info'){const el=document.getElementById('toast');el.textContent=msg;el.className='toast show '+type;clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2200);}
+
+init();
+</script>
+</body>
+</html>
